@@ -6,7 +6,6 @@ import About from "./pages/About";
 import Product from "./pages/Product";
 import NotFound from "./pages/NotFound";
 
-// Hero Banner (เหมือนหน้าหลัก RoV)
 const HeroBanner = () => (
   <div
     style={{
@@ -22,7 +21,6 @@ const HeroBanner = () => (
       style={{
         background: "rgba(0, 0, 0, 0.6)",
         padding: "2rem 3rem",
-        borderRadius: "12px",
         textAlign: "center",
       }}
     >
@@ -39,7 +37,6 @@ const HeroBanner = () => (
   </div>
 );
 
-// CTA Button Style
 const ctaButton = {
   backgroundColor: "#f0c000",
   color: "#000",
@@ -51,7 +48,6 @@ const ctaButton = {
   transition: "all 0.3s ease",
 };
 
-// ลิงก์ใน Nav
 const StyledLink = ({ to, children }) => (
   <Link
     to={to}
@@ -82,9 +78,9 @@ const contentBox = {
   maxWidth: "960px",
   margin: "auto",
   backgroundColor: "rgba(255, 255, 255, 0.03)",
-  borderRadius: "10px",
+  borderRadius: "0px",
   marginTop: "2rem",
-  boxShadow: "0 0 15px rgba(0, 0, 0, 0.4)",
+  boxShadow: "none",
 };
 
 function App() {
@@ -99,36 +95,38 @@ function App() {
         padding: 0,
       }}
     >
-      {/* Navigation Bar */}
       <nav
-  style={{
-    backgroundColor: "#121212",
-    padding: "1rem 2rem",
-    display: "flex",
-    alignItems: "center",        // เพิ่มให้อยู่แนวกลางแนวตั้ง
-    justifyContent: "center",
-    gap: "40px",
-    borderBottom: "2px solid #f0c000",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.6)",
-    borderRadius: "0 0 10px 10px",
-    position: "sticky",
-    top: 0,
-    zIndex: 10,
-  }}
->
-  <img
-    src="https://cdn-webth.garenanow.com/webth/rov/mainsite/v2/logo_rov.png"
-    alt="RoV Logo"
-    style={{ height: "40px", marginRight: "20px", borderRadius: "6px", boxShadow: "0 0 8px #f0c000" }}
-  />
-  
-  <StyledLink to="/">🏠 หน้าหลัก</StyledLink>
-  <StyledLink to="/about">🎮 เกี่ยวกับเกม</StyledLink>
-  <StyledLink to="/product">🛡 ฮีโร่ & ไอเทม</StyledLink>
-  <StyledLink to="/notfound">📞 ติดต่อ</StyledLink>
-</nav>
+        style={{
+          backgroundColor: "#121212",
+          padding: "1rem 2rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "40px",
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
+          borderBottom: "none",
+          boxShadow: "none",
+          borderRadius: "0px",
+        }}
+      >
+        <img
+          src="https://cdn-webth.garenanow.com/webth/rov/mainsite/v2/logo_rov.png"
+          alt="RoV Logo"
+          style={{
+            height: "40px",
+            marginRight: "20px",
+            borderRadius: "0px",
+            boxShadow: "none",
+          }}
+        />
+        <StyledLink to="/">🏠 หน้าหลัก</StyledLink>
+        <StyledLink to="/about">🎮 เกี่ยวกับเกม</StyledLink>
+        <StyledLink to="/product">🛡 ฮีโร่ & ไอเทม</StyledLink>
+        <StyledLink to="/notfound">📞 ติดต่อ</StyledLink>
+      </nav>
 
-      {/* Routes */}
       <Routes>
         <Route
           path="/"
@@ -146,15 +144,15 @@ function App() {
         <Route path="/notfound" element={<div style={contentBox}><NotFound /></div>} />
       </Routes>
 
-       <footer
+      <footer
         style={{
           backgroundColor: "#121212",
           color: "#f0c000",
           textAlign: "center",
           padding: "1rem",
-          borderTop: "2px solid #f0c000",
+          borderTop: "none",
           marginTop: "2rem",
-          boxShadow: "0 -2px 10px rgba(0,0,0,0.6)",
+          boxShadow: "none",
         }}
       >
         <p style={{ margin: 0 }}>
