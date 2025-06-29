@@ -76,11 +76,8 @@ const StyledLink = ({ to, children }) => (
 const contentBox = {
   padding: "2rem",
   maxWidth: "960px",
-  margin: "auto",
+  margin: "0 auto",
   backgroundColor: "rgba(255, 255, 255, 0.03)",
-  borderRadius: "0px",
-  marginTop: "2rem",
-  boxShadow: "none",
 };
 
 function App() {
@@ -93,8 +90,22 @@ function App() {
         minHeight: "100vh",
         margin: 0,
         padding: 0,
+        boxSizing: "border-box",
+        overflowX: "hidden",
+        width: "100%",
       }}
     >
+      {/* Reset body margin via global style */}
+      <style>{`
+        html, body, #root {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          width: 100%;
+          overflow-x: hidden;
+        }
+      `}</style>
+
       <nav
         style={{
           backgroundColor: "#121212",
@@ -106,9 +117,6 @@ function App() {
           position: "sticky",
           top: 0,
           zIndex: 10,
-          borderBottom: "none",
-          boxShadow: "none",
-          borderRadius: "0px",
         }}
       >
         <img
@@ -117,8 +125,6 @@ function App() {
           style={{
             height: "40px",
             marginRight: "20px",
-            borderRadius: "0px",
-            boxShadow: "none",
           }}
         />
         <StyledLink to="/">🏠 หน้าหลัก</StyledLink>
@@ -150,9 +156,6 @@ function App() {
           color: "#f0c000",
           textAlign: "center",
           padding: "1rem",
-          borderTop: "none",
-          marginTop: "2rem",
-          boxShadow: "none",
         }}
       >
         <p style={{ margin: 0 }}>
