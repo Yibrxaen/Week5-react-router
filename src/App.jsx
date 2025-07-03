@@ -4,6 +4,7 @@ import { Routes, Route, Link } from "react-router";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Product from "./pages/Product";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const HeroBanner = () => (
@@ -95,7 +96,6 @@ function App() {
         width: "100%",
       }}
     >
-      {/* Reset body margin via global style */}
       <style>{`
         html, body, #root {
           margin: 0;
@@ -103,6 +103,33 @@ function App() {
           box-sizing: border-box;
           width: 100%;
           overflow-x: hidden;
+        }
+        /* Responsive nav */
+        @media (max-width: 700px) {
+          nav {
+            flex-direction: column !important;
+            gap: 10px !important;
+            padding: 0.7rem 0.5rem !important;
+          }
+          nav img {
+            margin: 0 0 10px 0 !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .contentBox {
+            padding: 1rem !important;
+          }
+        }
+        @media (max-width: 500px) {
+          nav {
+            gap: 4px !important;
+          }
+          nav img {
+            height: 32px !important;
+          }
+          .contentBox {
+            padding: 0.5rem !important;
+          }
         }
       `}</style>
 
@@ -130,7 +157,7 @@ function App() {
         <StyledLink to="/">🏠 หน้าหลัก</StyledLink>
         <StyledLink to="/about">🎮 เกี่ยวกับเกม</StyledLink>
         <StyledLink to="/product">🛡 ฮีโร่ & ไอเทม</StyledLink>
-        <StyledLink to="/notfound">📞 ติดต่อ</StyledLink>
+        <StyledLink to="/contact">📞 ติดต่อ</StyledLink>
       </nav>
 
       <Routes>
@@ -139,15 +166,18 @@ function App() {
           element={
             <>
               <HeroBanner />
-              <div style={contentBox}>
+              <div className="contentBox" style={contentBox}>
                 <Home />
               </div>
             </>
           }
         />
-        <Route path="/about" element={<div style={contentBox}><About /></div>} />
-        <Route path="/product" element={<div style={contentBox}><Product /></div>} />
-        <Route path="/notfound" element={<div style={contentBox}><NotFound /></div>} />
+        <Route path="/about" element={<div className="contentBox" style={contentBox}><About /></div>} />
+        <Route path="/product" element={<div className="contentBox" style={contentBox}><Product /></div>} />
+        <Route path="/contact" element={<div className="contentBox" style={contentBox}><Contact /></div>} />
+        <Route path="/notfound" element={<div className="contentBox" style={contentBox}><NotFound /></div>} />
+        {/* ✅ เส้นทาง fallback สำหรับเส้นทางที่ไม่ตรง */}
+        <Route path="*" element={<div className="contentBox" style={contentBox}><NotFound /></div>} />
       </Routes>
 
       <footer

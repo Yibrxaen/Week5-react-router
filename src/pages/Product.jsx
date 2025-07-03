@@ -118,7 +118,7 @@ const categories = ["ALL HEROES", "ASSASSIN", "MAGE", "FIGHTER", "CARRY", "TANK"
 export default function Product() {
   const [filter, setFilter] = useState("ALL HEROES");
   const [search, setSearch] = useState("");
-  const [showItems, setShowItems] = useState(false); // state สำหรับการแสดงข้อมูลไอเทม
+  const [showItems, setShowItems] = useState(false);
 
   const filteredHeroes = heroes.filter((hero) => {
     const matchRole = filter === "ALL HEROES" || hero.role.toUpperCase() === filter;
@@ -127,26 +127,30 @@ export default function Product() {
   });
 
   const handleToggleItems = () => {
-    setShowItems(!showItems); // เปลี่ยนสถานะการแสดงข้อมูลไอเทม
+    setShowItems(!showItems);
   };
 
   return (
-    <div style={{ padding: "1rem", fontFamily: "'Segoe UI', sans-serif", backgroundColor: "#0d0d0d", color: "#fff", minHeight: "100vh" }}>
-      <h1 style={{ color: "#f0c000", textAlign: "center" }}>เหล่าฮีโร่อีกมากมาย!</h1>
+    <div style={{ padding: "2rem 0.5rem", fontFamily: "'Segoe UI', sans-serif", background: "linear-gradient(135deg, #181818 60%, #232323 100%)", color: "#fff", minHeight: "100vh" }}>
+      <h1 style={{ color: "#f0c000", textAlign: "center", fontSize: "2.5rem", fontWeight: 700, letterSpacing: 1 }}>เหล่าฮีโร่อีกมากมาย!</h1>
 
       {/* ตัวกรองหมวดหมู่ฮีโร่ */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.5rem", margin: "1rem 0" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "0.75rem", margin: "2rem 0 1.5rem 0" }}>
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setFilter(cat)}
             style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: filter === cat ? "#f0c000" : "#1c1c1c",
-              color: filter === cat ? "#000" : "#fff",
-              border: "1px solid #f0c000",
+              padding: "0.5rem 1.5rem",
+              background: filter === cat ? "linear-gradient(90deg, #ffe066 60%, #f0c000 100%)" : "#232323",
+              color: filter === cat ? "#222" : "#fff",
+              border: filter === cat ? "2px solid #ffe066" : "1px solid #f0c000",
               cursor: "pointer",
-              borderRadius: "5px",
+              borderRadius: "999px",
+              fontWeight: 600,
+              fontSize: "1rem",
+              boxShadow: filter === cat ? "0 2px 8px #f0c00044" : "none",
+              transition: "all 0.2s"
             }}
           >
             {cat}
@@ -154,188 +158,264 @@ export default function Product() {
         ))}
       </div>
 
-      <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
         <input
           type="text"
           placeholder="ค้นหา..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={{
-            padding: "0.5rem 1rem",
-            borderRadius: "5px",
-            border: "1px solid #f0c000",
-            width: "300px",
-            backgroundColor: "#1c1c1c",
+            padding: "0.7rem 1.2rem",
+            borderRadius: "999px",
+            border: "2px solid #f0c000",
+            width: "320px",
+            backgroundColor: "#181818",
             color: "#fff",
+            fontSize: "1.1rem",
+            outline: "none",
+            boxShadow: "0 2px 8px #f0c00022"
           }}
         />
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1rem" }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "1.5rem",
+        justifyContent: "center",
+        alignItems: "stretch",
+        margin: "0 auto 2.5rem auto",
+        maxWidth: 1200
+      }}>
         {filteredHeroes.map((hero, i) => (
-          <div
-            key={i}
-            style={{
-              width: "180px",
-              backgroundColor: "#1c1c1c",
-              border: "1px solid #f0c000",
-              borderRadius: "8px",
-              textAlign: "center",
-              padding: "0.5rem",
-              color: "#fff",
-            }}
-          >
-            <img src={hero.img} alt={hero.name} style={{ width: "100%", borderRadius: "5px", marginBottom: "0.5rem" }} />
-            <div style={{ fontWeight: "bold" }}>{hero.name}</div>
-            <div style={{ color: "#f0c000", fontSize: "0.9rem" }}>{hero.role}</div>
-            <p style={{ fontSize: "0.8rem", marginTop: "0.5rem" }}>{hero.description}</p>
-          </div>
+          <HeroCard key={i} hero={hero} />
         ))}
       </div>
-
       {/* 🔽 ส่วน "ไอเทมคืออะไร?" */}
-      <div style={{ backgroundColor: "#1c1c1c", padding: "1rem", borderRadius: "10px", margin: "1rem 0" }}>
-        <h2 style={{ color: "#f0c000" }}>ไอเทมคืออะไร?</h2>
-        <p>ไอเทมคือของที่ช่วยเพิ่มคุณสมบัติต่าง ๆ ให้เรา ช่วยให้เราได้เปรียบศัตรู เช่น ถ้าเรามีพลังโจมตีมากกว่าเราก็จะมีโอกาสในการฆ่าศัตรูได้มากขึ้น</p>
+      <ItemInfo showItems={showItems} handleToggleItems={handleToggleItems} />
+    </div>
+  );
+}
 
-        {/* ปุ่มดูไอเทม */}
+function ItemInfo({ showItems, handleToggleItems }) {
+  // สำหรับ modal preview รูปภาพไอเทม
+  const [modalImg, setModalImg] = useState(null);
+  // รายการรูปภาพไอเทม (ประเภท)
+  const itemImages = [
+    "https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/damage.png",
+    "https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/magic_damage.png",
+    "https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/defense.png",
+    "https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/movement.png",
+    "https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/jungle.png",
+    "https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/support.png"
+  ];
+  return (
+    <div style={{ background: "linear-gradient(135deg, #232323 60%, #181818 100%)", padding: "2rem 1rem", borderRadius: "18px", margin: "2rem auto 1rem auto", maxWidth: 900, boxShadow: "0 4px 24px #f0c00022", position: "relative" }}>
+      <h2 style={{ color: "#f0c000", fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>ไอเทมคืออะไร?</h2>
+      <p style={{ fontSize: "1.1rem", marginBottom: 16 }}>ไอเทมคือของที่ช่วยเพิ่มคุณสมบัติต่าง ๆ ให้เรา ช่วยให้เราได้เปรียบศัตรู เช่น ถ้าเรามีพลังโจมตีมากกว่าเราก็จะมีโอกาสในการฆ่าศัตรูได้มากขึ้น</p>
+      {/* ปุ่มดูไอเทม */}
+      <div style={{ textAlign: "center" }}>
         <button
           onClick={handleToggleItems}
           style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "#f0c000",
-            color: "#000",
-            border: "1px solid #f0c000",
+            padding: "0.7rem 2.2rem",
+            background: showItems ? "#232323" : "linear-gradient(90deg, #ffe066 60%, #f0c000 100%)",
+            color: showItems ? "#ffe066" : "#222",
+            border: "2px solid #ffe066",
             cursor: "pointer",
-            borderRadius: "5px",
-            marginTop: "1rem",
+            borderRadius: "999px",
+            fontWeight: 700,
+            fontSize: "1.1rem",
+            margin: "1.2rem 0 2rem 0",
+            boxShadow: "0 2px 8px #f0c00033",
+            transition: "all 0.2s"
           }}
         >
           {showItems ? "ซ่อนไอเทม" : "ดูไอเทม"}
         </button>
+      </div>
+      {/* ข้อมูลไอเทม */}
+      {showItems && (
+        <>
+          <h3 style={{ color: "#f0c000", fontSize: "1.2rem", fontWeight: 700, marginTop: 0 }}>เปรียบเทียบคุณสมบัติ</h3>
+          <table style={{ width: "100%", color: "#fff", borderCollapse: "collapse", marginBottom: "1.5rem", fontSize: "1.05rem" }}>
+            <thead>
+              <tr style={{ backgroundColor: "#333" }}>
+                <th style={{ padding: "10px", border: "1.5px solid #f0c000" }}>คุณสมบัติ</th>
+                <th style={{ padding: "10px", border: "1.5px solid #f0c000" }}>ไม่มีไอเทม</th>
+                <th style={{ padding: "10px", border: "1.5px solid #f0c000" }}>มีไอเทม</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>พลังโจมตี</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>350</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>705 (350+355)</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>พลังชีวิต</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>6204</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>8604 (6204+2400)</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>เกราะ</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>364 (37.7%)</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>1034 (364+670) – 63.2%</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>เจาะเกราะ</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>0</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>45%</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>ความเร็วเคลื่อนที่</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>380</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>440 (380+60)</td>
+              </tr>
+              <tr>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>ลดคูลดาวน์</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>0%</td>
+                <td style={{ padding: "10px", border: "1.5px solid #f0c000" }}>35%</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3 style={{ color: "#f0c000", fontWeight: 700, fontSize: "1.1rem" }}>ประเภทไอเทม</h3>
+          <p style={{ fontSize: "1.05rem" }}>ประเภทของไอเทมมีทั้งหมด 6 ประเภท ซึ่งการใช้งานไอเทมมี 2 แบบ คือ:</p>
+          <ul style={{ paddingLeft: "1.2rem", fontSize: "1.05rem" }}>
+            <li><strong style={{ color: "#f0c000" }}>Passive</strong>: ไอเทมที่เมื่อซื้อมา จะเพิ่มความสามารถให้ฮีโร่ได้อัตโนมัติโดยไม่ต้องกดใช้งาน</li>
+            <li><strong style={{ color: "#f0c000" }}>Active</strong>: ไอเทมที่เมื่อซื้อมา จะต้องกดใช้จึงจะเพิ่มความสามารถให้กับฮีโร่</li>
+          </ul>
+          <h3 style={{ color: "#f0c000", fontWeight: 700, fontSize: "1.1rem" }}>ตัวอย่างไอเทมที่ใช้</h3>
+          <ul style={{ paddingLeft: "1.2rem", fontSize: "1.05rem" }}>
+            <li>Sonic Boots</li>
+            <li>Spear of Longinus</li>
+            <li>Muramasa</li>
+            <li>Frost Cape</li>
+            <li>Shield of the Lost</li>
+            <li>Fenrir’s Tooth</li>
+          </ul>
+        </>
+      )}
+      <p style={{ marginTop: "1.5rem", fontSize: "1.1rem" }}>
+        การออกไอเทม หรือ การออกของ = <span style={{ color: "#f0c000", fontWeight: 700 }}>การซื้อไอเทม</span>
+      </p>
+      {/* 🔽 ส่วนใหม่ที่เพิ่ม: ประเภทของไอเทม */}
+      <h3 style={{ color: "#f0c000", marginTop: "2rem", fontWeight: 700, fontSize: "1.1rem" }}>ประเภทของไอเทม</h3>
+      <p style={{ fontSize: "1.05rem" }}>ประเภทของไอเทมมีทั้งหมด 6 ประเภท ซึ่งการใช้งานไอเทมมี 2 แบบ คือ</p>
+      <ul style={{ paddingLeft: "1.2rem", fontSize: "1.05rem" }}>
+        <li><strong style={{ color: "#f0c000" }}>Passive</strong> — ไอเทมที่เมื่อซื้อมา จะเพิ่มความสามารถให้ฮีโร่ได้อัตโนมัติโดยไม่ต้องกดใช้งาน</li>
+        <li><strong style={{ color: "#f0c000" }}>Active</strong> — ไอเทมที่เมื่อซื้อมา จะต้องกดใช้จึงจะเพิ่มความสามารถให้กับฮีโร่</li>
+      </ul>
+      {/* แสดงภาพประกอบประเภทไอเทม (คลิกดูรูปใหญ่) */}
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "1.5rem", marginTop: "2rem" }}>
+        {itemImages.map((src, idx) => (
+          <img
+            key={src}
+            src={src}
+            alt="ประเภทของไอเทม"
+            style={{ maxWidth: "180px", borderRadius: "10px", border: "2px solid #f0c000", boxShadow: "0 2px 8px #f0c00033", cursor: "pointer", transition: "transform 0.15s" }}
+            onClick={() => setModalImg(src)}
+            title="คลิกเพื่อดูรูปใหญ่"
+          />
+        ))}
+      </div>
+      {/* modal preview รูปภาพไอเทม */}
+      {modalImg && (
+        <div
+          onClick={() => setModalImg(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.85)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "zoom-out"
+          }}
+        >
+          <img
+            src={modalImg}
+            alt="ประเภทของไอเทม"
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "80vh",
+              borderRadius: 16,
+              border: "3px solid #f0c000",
+              boxShadow: "0 8px 32px #000a"
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
-        {/* ข้อมูลไอเทม */}
-        {showItems && (
-          <>
-            <h3 style={{ color: "#f0c000" }}>เปรียบเทียบคุณสมบัติ</h3>
-            <table style={{ width: "100%", color: "#fff", borderCollapse: "collapse", marginBottom: "1rem" }}>
-              <thead>
-                <tr style={{ backgroundColor: "#333" }}>
-                  <th style={{ padding: "8px", border: "1px solid #f0c000" }}>คุณสมบัติ</th>
-                  <th style={{ padding: "8px", border: "1px solid #f0c000" }}>ไม่มีไอเทม</th>
-                  <th style={{ padding: "8px", border: "1px solid #f0c000" }}>มีไอเทม</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>พลังโจมตี</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>350</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>705 (350+355)</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>พลังชีวิต</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>6204</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>8604 (6204+2400)</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>เกราะ</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>364 (37.7%)</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>1034 (364+670) – 63.2%</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>เจาะเกราะ</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>0</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>45%</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>ความเร็วเคลื่อนที่</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>380</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>440 (380+60)</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>ลดคูลดาวน์</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>0%</td>
-                  <td style={{ padding: "8px", border: "1px solid #f0c000" }}>35%</td>
-                </tr>
-                {/* เพิ่มข้อมูลที่เหลือตามต้องการ */}
-              </tbody>
-            </table>
-
-            <h3 style={{ color: "#f0c000" }}>ประเภทไอเทม</h3>
-            <p>ประเภทของไอเทมมีทั้งหมด 6 ประเภท ซึ่งการใช้งานไอเทมมี 2 แบบ คือ:</p>
-            <ul style={{ paddingLeft: "1.2rem" }}>
-              <li><strong>Passive</strong>: ไอเทมที่เมื่อซื้อมา จะเพิ่มความสามารถให้ฮีโร่ได้อัตโนมัติโดยไม่ต้องกดใช้งาน</li>
-              <li><strong>Active</strong>: ไอเทมที่เมื่อซื้อมา จะต้องกดใช้จึงจะเพิ่มความสามารถให้กับฮีโร่</li>
-            </ul>
-
-            <h3 style={{ color: "#f0c000" }}>ตัวอย่างไอเทมที่ใช้</h3>
-            <ul style={{ paddingLeft: "1.2rem" }}>
-              <li>Sonic Boots</li>
-              <li>Spear of Longinus</li>
-              <li>Muramasa</li>
-              <li>Frost Cape</li>
-              <li>Shield of the Lost</li>
-              <li>Fenrir’s Tooth</li>
-            </ul>
-          </>
-        )}
-        <p style={{ marginTop: "1rem" }}>
-          การออกไอเทม หรือ การออกของ = <span style={{ color: "#f0c000" }}>การซื้อไอเทม</span>
-        </p>
-        {/* 🔽 ส่วนใหม่ที่เพิ่ม: ประเภทของไอเทม */}
-    <h3 style={{ color: "#f0c000", marginTop: "2rem" }}>ประเภทของไอเทม</h3>
-    <p>ประเภทของไอเทมมีทั้งหมด 6 ประเภท ซึ่งการใช้งานไอเทมมี 2 แบบ คือ</p>
-    <ul style={{ paddingLeft: "1.2rem" }}>
-      <li><strong style={{ color: "#f0c000" }}>Passive</strong> — ไอเทมที่เมื่อซื้อมา จะเพิ่มความสามารถให้ฮีโร่ได้อัตโนมัติโดยไม่ต้องกดใช้งาน</li>
-      <li><strong style={{ color: "#f0c000" }}>Active</strong> — ไอเทมที่เมื่อซื้อมา จะต้องกดใช้จึงจะเพิ่มความสามารถให้กับฮีโร่</li>
-    </ul>
-
-    {/* แสดงภาพประกอบประเภทไอเทม */}
-    <div style={{ textAlign: "center", marginTop: "1rem" }}>
-      <img 
-        src="https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/damage.png" 
-        alt="ประเภทของไอเทม" 
-        style={{ maxWidth: "50%", borderRadius: "10px", border: "1px solid #f0c000" }} 
-      />
-    </div>
-    <div style={{ textAlign: "center", marginTop: "1rem" }}>
-      <img 
-        src="https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/magic_damage.png" 
-        alt="ประเภทของไอเทม" 
-        style={{ maxWidth: "50%", borderRadius: "10px", border: "1px solid #f0c000" }} 
-      />
-    </div>
-    <div style={{ textAlign: "center", marginTop: "1rem" }}>
-      <img 
-        src="https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/defense.png" 
-        alt="ประเภทของไอเทม" 
-        style={{ maxWidth: "50%", borderRadius: "10px", border: "1px solid #f0c000" }} 
-      />
-    </div>
-    <div style={{ textAlign: "center", marginTop: "1rem" }}>
-      <img 
-        src="https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/movement.png" 
-        alt="ประเภทของไอเทม" 
-        style={{ maxWidth: "50%", borderRadius: "10px", border: "1px solid #f0c000" }} 
-      />
-    </div>
-    <div style={{ textAlign: "center", marginTop: "1rem" }}>
-      <img 
-        src="https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/jungle.png" 
-        alt="ประเภทของไอเทม" 
-        style={{ maxWidth: "50%", borderRadius: "10px", border: "1px solid #f0c000" }} 
-      />
-    </div>
-    <div style={{ textAlign: "center", marginTop: "1rem" }}>
-      <img 
-        src="https://cdn-webth.garenanow.com/webth/cdn/rov/gameguides/itemtype/support.png" 
-        alt="ประเภทของไอเทม" 
-        style={{ maxWidth: "50%", borderRadius: "10px", border: "1px solid #f0c000" }} 
-      />
-    </div>
-    
-    </div>
-      {/* 🔼 จบส่วน "ไอเทมคืออะไร?" */}
-    </div>
+// HeroCard with modal preview (moved outside Product)
+function HeroCard({ hero }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div
+        style={{
+          background: "linear-gradient(135deg, #232323 60%, #181818 100%)",
+          border: "2px solid #f0c000",
+          borderRadius: "16px",
+          textAlign: "center",
+          padding: "1.2rem 0.7rem 1.5rem 0.7rem",
+          color: "#fff",
+          boxShadow: "0 4px 16px #f0c00022",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minHeight: 340,
+          position: "relative"
+        }}
+      >
+        <img
+          src={hero.img}
+          alt={hero.name}
+          style={{ width: "100%", maxWidth: 120, height: 120, objectFit: "cover", borderRadius: "10px", border: "2px solid #f0c000", marginBottom: "0.7rem", boxShadow: "0 2px 8px #f0c00033", cursor: "pointer" }}
+          onClick={() => setOpen(true)}
+          title="คลิกเพื่อดูรูปใหญ่"
+        />
+        <div style={{ fontWeight: 700, fontSize: "1.2rem", marginBottom: 2 }}>{hero.name}</div>
+        <div style={{ color: "#f0c000", fontSize: "1rem", fontWeight: 600, marginBottom: 4 }}>{hero.role}</div>
+        <p style={{ fontSize: "0.95rem", marginTop: "0.5rem", color: "#fff", opacity: 0.85 }}>{hero.description}</p>
+      </div>
+      {open && (
+        <div
+          onClick={() => setOpen(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.85)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "zoom-out"
+          }}
+        >
+          <img
+            src={hero.img}
+            alt={hero.name}
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "80vh",
+              borderRadius: 16,
+              border: "3px solid #f0c000",
+              boxShadow: "0 8px 32px #000a"
+            }}
+          />
+        </div>
+      )}
+    </>
   );
 }
